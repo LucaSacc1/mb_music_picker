@@ -157,11 +157,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<PermissionStatus> _getPermission() async {
-    final PermissionStatus permission = await Permission.mediaLibrary.status;
+    PermissionStatus permission;
+    if (Platform.isIOS) {
+      permission = await Permission.mediaLibrary.status;
+    } else {
+      permission = await Permission.storage.status;
+    }
 
     if (permission != PermissionStatus.granted && permission != PermissionStatus.denied) {
-      final PermissionStatus permissionStatus = await _requestPermission(Permission.mediaLibrary);
-      return permissionStatus;
+      if (Platform.isIOS) {
+        final PermissionStatus permissionStatus = await _requestPermission(Permission.mediaLibrary);
+        return permissionStatus;
+      } else {
+        final PermissionStatus permissionStatus = await _requestPermission(Permission.storage);
+        return permissionStatus;
+      }
     } else {
       return permission;
     }
