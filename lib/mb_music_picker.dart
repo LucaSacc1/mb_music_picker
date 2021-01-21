@@ -15,15 +15,7 @@ class MbMusicPicker {
         return null;
       }
 
-      if(Platform.isIOS){
-        MBMusicItem.fromCupertinoMap(result);
-      }else{
-        if(Platform.isAndroid){
-          MBMusicItem.fromAndroidMap(result);
-        }
-      }
-
-      return null;
+      return Platform.isIOS ? MBMusicItem.fromCupertinoMap(result) : MBMusicItem.fromAndroidMap(result);
     } on PlatformException catch (e) {
       print("Failed to pick a media item: '${e.message}'.");
       return null;
