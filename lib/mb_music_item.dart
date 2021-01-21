@@ -19,6 +19,13 @@ class MBMusicItem {
     url = map['asset_url'];
   }
 
+  MBMusicItem.fromAndroidMap(Map map) {
+    identifier = map["identifier"];
+    title = map['title'];
+    artist = map['artist'];
+    url = map['asset_url'];
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
