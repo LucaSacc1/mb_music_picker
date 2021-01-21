@@ -16,10 +16,10 @@ class MbMusicPicker {
       }
 
       if(Platform.isIOS){
-        MBMusicItem.fromCupertinoMap(result);
+        return MBMusicItem.fromCupertinoMap(result);
       }else{
         if(Platform.isAndroid){
-          MBMusicItem.fromAndroidMap(result);
+          return MBMusicItem.fromAndroidMap(result);
         }
       }
 

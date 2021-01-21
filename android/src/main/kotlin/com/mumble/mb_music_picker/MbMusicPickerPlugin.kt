@@ -1,12 +1,14 @@
 package com.mumble.mb_music_picker
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.NonNull
+import androidx.loader.content.CursorLoader
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -69,26 +71,32 @@ class MbMusicPickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                     if (uri != null) {
                         val mmr = MediaMetadataRetriever()
                         mmr.setDataSource(act, uri)
-                        val filename: String? = getNameFromUri(uri)
                         var title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
                         var artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
-                        if (title == null) {
-                            title = filename
-                            if(title == null){
-                                title = "No Title"
+
+                        val path = _getRealPathFromURI(act!!, uri)
+
+                        if (path != null) {
+                            if (title == null) {
+                                title = getNameFromPath(path)
+                                if (title == null) {
+                                    title = "No Title"
+                                }
                             }
-                        }
 
-                        if(artist == null){
-                            artist = "No Artist"
-                        }
+                            if (artist == null) {
+                                artist = "No Artist"
+                            }
 
-                        val map = mutableMapOf<String, String>()
-                        map["identifier"] = uri.toString()
-                        map["title"] = title
-                        map["artist"] = artist
-                        map["asset_url"] = uri.toString()
-                        result.success(map)
+                            val map = mutableMapOf<String, String>()
+                            map["identifier"] = path
+                            map["title"] = title
+                            map["artist"] = artist
+                            map["asset_url"] = path
+                            result.success(map)
+                        } else {
+                            return false
+                        }
                     }
                     return true
                 }
@@ -101,9 +109,9 @@ class MbMusicPickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         channel.setMethodCallHandler(null)
     }
 
-    fun getNameFromUri(uri: Uri): String? {
+    fun getNameFromPath(path: String): String? {
         var fileName: String = ""
-        val file = File(uri.path)
+        val file = File(path)
         if (file.exists()) {
             fileName = file.name
             val index_point = fileName.indexOf(".")
@@ -111,5 +119,18 @@ class MbMusicPickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         }
 
         return fileName
+    }
+
+    private fun _getRealPathFromURI(context: Context, contentUri: Uri): String? {
+        val proj = arrayOf(MediaStore.Audio.Media.DATA)
+        val loader = CursorLoader(context, contentUri, proj, null, null, null)
+        val cursor: Cursor? = loader.loadInBackground()
+        if (cursor != null) {
+            val column_index: Int = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+            cursor.moveToFirst()
+            return cursor.getString(column_index)
+        }
+
+        return null
     }
 }

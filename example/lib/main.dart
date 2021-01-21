@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
       _audioPlayer.resume();
     } else {
       print('SONG URL: ${_song.url}');
-      _audioPlayer.play(_song.url);
+      _audioPlayer.play(_song.url, isLocal: true);
     }
   }
 
