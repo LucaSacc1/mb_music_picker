@@ -69,14 +69,20 @@ class MbMusicPickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
                     if (uri != null) {
                         val mmr = MediaMetadataRetriever()
                         mmr.setDataSource(act, uri)
-                        val filename: String = getNameFromUri(uri)
+                        val filename: String? = getNameFromUri(uri)
                         var title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
-                        val artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+                        var artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
                         if (title == null) {
                             title = filename
+                            if(title == null){
+                                title = "No Title"
+                            }
                         }
 
-                        Log.d("CIA", "CIAO")
+                        if(artist == null){
+                            artist = "No Artist"
+                        }
+
                         val map = mutableMapOf<String, String>()
                         map["identifier"] = uri.toString()
                         map["title"] = title
@@ -95,7 +101,7 @@ class MbMusicPickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
         channel.setMethodCallHandler(null)
     }
 
-    fun getNameFromUri(uri: Uri): String {
+    fun getNameFromUri(uri: Uri): String? {
         var fileName: String = ""
         val file = File(uri.path)
         if (file.exists()) {
