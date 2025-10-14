@@ -1,35 +1,34 @@
-
 class MBMusicItem {
-  String identifier;
-  String title;
-  String artist;
-  String url;
+  final String identifier;
+  final String title;
+  final String artist;
+  final String url;
 
   MBMusicItem({
-    this.identifier,
-    this.title,
-    this.artist,
-    this.url
+    required this.identifier,
+    required this.title,
+    required this.artist,
+    required this.url,
   });
 
-  MBMusicItem.fromCupertinoMap(Map map) {
-    identifier = map["identifier"];
-    title = map['title'];
-    artist = map['artist'];
-    url = map['asset_url'];
-  }
+  factory MBMusicItem.fromCupertinoMap(Map map) => MBMusicItem(
+    identifier: map["identifier"],
+    title: map['title'],
+    artist: map['artist'],
+    url: map['asset_url'],
+  );
 
-  MBMusicItem.fromAndroidMap(Map map) {
-    identifier = map["identifier"];
-    title = map['title'];
-    artist = map['artist'];
-    url = map['asset_url'];
-  }
+  factory MBMusicItem.fromAndroidMap(Map map) => MBMusicItem(
+    identifier: map["identifier"],
+    title: map['title'],
+    artist: map['artist'],
+    url: map['asset_url'],
+  );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is MBMusicItem &&
-              runtimeType == other.runtimeType &&
-              identifier == other.identifier;
+      other is MBMusicItem &&
+          runtimeType == other.runtimeType &&
+          identifier == other.identifier;
 }
