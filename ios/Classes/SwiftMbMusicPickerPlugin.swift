@@ -15,7 +15,7 @@ public class SwiftMbMusicPickerPlugin: NSObject, FlutterPlugin {
       
       guard let appDelegate = UIApplication.shared.delegate as? FlutterAppDelegate else { return }
       
-      let rootViewController = appDelegate.window.rootViewController ?? UIViewController()
+      let rootViewController = appDelegate.window?.rootViewController ?? UIViewController()
       
       let instance = SwiftMbMusicPickerPlugin(withViewController: rootViewController)
       registrar.addMethodCallDelegate(instance, channel: channel)
